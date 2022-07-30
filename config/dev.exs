@@ -29,6 +29,8 @@ config :ex_wallet_web, ExWalletWeb.Endpoint,
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
   ]
 
+config :integration, :etherscan, api_key: System.get_env("ETHERSCAN_API_KEY")
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

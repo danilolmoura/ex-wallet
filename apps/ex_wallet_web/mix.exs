@@ -11,7 +11,7 @@ defmodule ExWalletWeb.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext] ++ Mix.compilers(),
+      compilers: [] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -50,7 +50,8 @@ defmodule ExWalletWeb.MixProject do
       {:gettext, "~> 0.18"},
       {:ex_wallet, in_umbrella: true},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:integration, "0.1.0", in_umbrella: true}
     ]
   end
 

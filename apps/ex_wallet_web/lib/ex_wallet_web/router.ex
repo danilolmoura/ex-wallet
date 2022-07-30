@@ -20,6 +20,12 @@ defmodule ExWalletWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/eth/", ExWalletWeb do
+    pipe_through :browser
+
+    live("/status", EthLive.TransactionStatus)
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", ExWalletWeb do
   #   pipe_through :api

@@ -20,6 +20,11 @@ config :ex_wallet_web, ExWalletWeb.Endpoint,
   secret_key_base: "QbDaD/tNIoNr9D757vc0Z3va0JRSPQYMEHXW6SQ3E3HbgGbGsXTWxHdF5fSIWFPf",
   server: false
 
+# EtherScan  configs
+config :tesla, Integration.EtherScan.Api, adapter: Integration.EtherScan.Adapter.Mock
+
+config :integration, :etherscan, api_key: "TEST_API_KEY"
+
 # Print only warnings and errors during test
 config :logger, level: :warn
 
