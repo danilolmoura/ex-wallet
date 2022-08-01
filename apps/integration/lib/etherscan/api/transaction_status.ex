@@ -1,6 +1,6 @@
-defmodule Integration.Etherscan.Api.TransactionStatus do
+defmodule Integration.EtherScan.Api.TransactionStatus do
   @moduledoc """
-  Embedded schema to represent `Integration.Etherscan.Api.TransactionStatus`
+  Embedded schema to represent `Integration.EtherScan.Api.TransactionStatus`
   """
 
   use Ecto.Schema

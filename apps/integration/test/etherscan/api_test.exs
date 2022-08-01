@@ -4,7 +4,7 @@ defmodule Integration.EtherScan.ApiTest do
   import Mox
 
   alias Integration.EtherScan.Api
-  alias Integration.Etherscan.Api.TransactionStatus
+  alias Integration.EtherScan.Api.TransactionStatus
   alias Integration.EtherScan.Adapter.Mock
 
   @base_url "https://api.etherscan.io/api"

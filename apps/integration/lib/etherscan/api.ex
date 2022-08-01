@@ -1,6 +1,6 @@
 defmodule Integration.EtherScan.Api do
   @moduledoc """
-  Integration with `Etherscan API`
+  Integration with `EtherScan API`
 
   https://docs.etherscan.io/
   """
@@ -9,7 +9,7 @@ defmodule Integration.EtherScan.Api do
 
   require Logger
 
-  alias Integration.Etherscan.Api.TransactionStatus
+  alias Integration.EtherScan.Api.TransactionStatus
 
   @base_url "https://api.etherscan.io/api"
   @params_get_tx_receipt_status %{
