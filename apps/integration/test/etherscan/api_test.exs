@@ -22,36 +22,67 @@ defmodule Integration.EtherScan.ApiTest do
       }
     end
 
-    test "with valid tx_hash", %{tx_hash: tx_hash, params: params} do
+    test "with valid query", %{tx_hash: tx_hash} do
       expect(Mock, :call, fn
         %{
-          method: :get,
-          url: url,
           query: query
         },
         _opts ->
           assert query == [apikey: Application.get_env(:integration, :etherscan)[:api_key]]
+
+          {:ok, %Tesla.Env{status: 200, body: success_call_success_transaction_output()}}
+      end)
+
+      Api.get_tx_receipt_status(tx_hash)
+    end
+
+    test "with valid url", %{tx_hash: tx_hash, params: params} do
+      expect(Mock, :call, fn
+        %{
+          url: url
+        },
+        _opts ->
           assert url == Api.build_url(:gettxreceiptstatus, Map.put(params, "txhash", tx_hash))
 
-          {:ok, %Tesla.Env{status: 200, body: create_output()}}
+          {:ok, %Tesla.Env{status: 200, body: success_call_success_transaction_output()}}
+      end)
+
+      Api.get_tx_receipt_status(tx_hash)
+    end
+
+    test "with valid http call and success transaction", %{tx_hash: tx_hash} do
+      expect(Mock, :call, fn
+        %{
+          method: :get
+        },
+        _opts ->
+          {:ok, %Tesla.Env{status: 200, body: success_call_success_transaction_output()}}
       end)
 
       assert Api.get_tx_receipt_status(tx_hash) ==
                {:ok, %TransactionStatus{hash: tx_hash, status: true}}
     end
 
-    test "with some failure tx_hash", %{tx_hash: tx_hash, params: params} do
+    test "with valid http call and failed transaction", %{tx_hash: tx_hash} do
       expect(Mock, :call, fn
         %{
-          method: :get,
-          url: url,
-          query: query
+          method: :get
         },
         _opts ->
-          assert query == [apikey: Application.get_env(:integration, :etherscan)[:api_key]]
-          assert url == Api.build_url(:gettxreceiptstatus, Map.put(params, "txhash", tx_hash))
+          {:ok, %Tesla.Env{status: 200, body: success_call_failed_transaction_output()}}
+      end)
 
-          {:ok, %Tesla.Env{status: 200, body: create_failure_output()}}
+      assert Api.get_tx_receipt_status(tx_hash) ==
+               {:ok, %TransactionStatus{hash: tx_hash, status: false}}
+    end
+
+    test "with failed http call", %{tx_hash: tx_hash} do
+      expect(Mock, :call, fn
+        %{
+          method: :get
+        },
+        _opts ->
+          {:ok, %Tesla.Env{status: 200, body: failed_call_output()}}
       end)
 
       assert Api.get_tx_receipt_status(tx_hash) ==
@@ -59,7 +90,7 @@ defmodule Integration.EtherScan.ApiTest do
     end
   end
 
-  defp create_output do
+  defp success_call_success_transaction_output do
     %{
       "message" => "OK-Missing/Invalid API Key, rate limit of 1/5sec applied",
       "result" => %{"status" => "1"},
@@ -67,7 +98,15 @@ defmodule Integration.EtherScan.ApiTest do
     }
   end
 
-  defp create_failure_output do
+  defp success_call_failed_transaction_output do
+    %{
+      "message" => "OK-Missing/Invalid API Key, rate limit of 1/5sec applied",
+      "result" => %{"status" => "0"},
+      "status" => "1"
+    }
+  end
+
+  defp failed_call_output do
     %{
       "message" => "NOTOK",
       "result" => "Max rate limit reached, please use API Key for higher rate limit",
