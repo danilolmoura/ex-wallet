@@ -26,7 +26,7 @@ config :tesla, Integration.EtherScan.Api, adapter: Integration.EtherScan.Adapter
 config :integration, :etherscan, api_key: "TEST_API_KEY"
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :error
 
 # In test we don't send emails.
 config :ex_wallet, ExWallet.Mailer, adapter: Swoosh.Adapters.Test

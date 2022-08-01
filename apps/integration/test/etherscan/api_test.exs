@@ -7,6 +7,8 @@ defmodule Integration.EtherScan.ApiTest do
   alias Integration.Etherscan.Api.TransactionStatus
   alias Integration.EtherScan.Adapter.Mock
 
+  @base_url "https://api.etherscan.io/api"
+
   setup :verify_on_exit!
 
   describe "get_tx_receipt_status/1" do
@@ -42,7 +44,7 @@ defmodule Integration.EtherScan.ApiTest do
           url: url
         },
         _opts ->
-          assert url == Api.build_url(:gettxreceiptstatus, Map.put(params, "txhash", tx_hash))
+          assert url == Api.build_url(@base_url, Map.put(params, "txhash", tx_hash))
 
           {:ok, %Tesla.Env{status: 200, body: success_call_success_transaction_output()}}
       end)

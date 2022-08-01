@@ -1,4 +1,8 @@
 defmodule Integration.Etherscan.Api.TransactionStatus do
+  @moduledoc """
+  Embedded schema to represent `Integration.Etherscan.Api.TransactionStatus`
+  """
+
   use Ecto.Schema
 
   import Ecto.Changeset
