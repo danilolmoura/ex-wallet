@@ -1,6 +1,6 @@
 defmodule Integration.EtherScan.Api do
   @moduledoc """
-  Integration with `EtherScan API`
+  Provides integration with `EtherScan API`
 
   https://docs.etherscan.io/
   """
@@ -19,6 +19,22 @@ defmodule Integration.EtherScan.Api do
 
   defp api_key, do: Application.get_env(:integration, :etherscan)[:api_key]
 
+  @doc """
+  Get transaction receipt status
+
+  ## Parameters
+
+    - txhash: String representing a transaction hash
+
+  ## Examples
+
+  iex> Integration.EtherScan.Api.get_tx_receipt_status("0x7b6d0e8d812873260291c3f8a9fa99a61721a033a01e5c5af3ceb5e1dc9e7bd0")
+  {:ok,
+  %Integration.EtherScan.Api.TransactionStatus{
+    hash: "1111",
+    status: true
+  }}
+  """
   @spec get_tx_receipt_status(String.t()) :: {:ok, %TransactionStatus{}} | {:error, String.t()}
   def get_tx_receipt_status(txhash) do
     params = @params_get_tx_receipt_status |> Map.put("txhash", txhash)
@@ -44,7 +60,7 @@ defmodule Integration.EtherScan.Api do
 
   defp response_status(%Tesla.Env{status: 200, body: %{"status" => "0", "result" => result}}) do
     Logger.warning("EtherScan.Api: #{result}")
-    {:error, result}
+    {:error, "Something went wrong, please try again in few seconds"}
   end
 
   defp response_status(%Tesla.Env{status: 200, body: %{"status" => "1", "result" => result}}) do
