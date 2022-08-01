@@ -1,0 +1,152 @@
+<style>
+    .container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .container-table {
+        margin-top: 30px;
+    }
+
+    .form-header {
+        font-size: 20px;
+        font-weight: 300;
+    }
+
+    .table-header {
+        font-size: 20px;
+        font-weight: 300;
+    }
+
+    .label {
+        font-size: 15px;
+        font-weight: 300
+    }
+
+    .submit{
+        display: block;
+        margin-left: auto;
+        margin-right: 0;
+    }
+
+    th, td {
+        border: 0.5px solid #999;
+        border-radius: 0.2rem;
+    }
+
+    th {
+        background-color: #DCDCDC;
+        text-align: center;
+        line-height: 1.0;
+    }
+
+    td {
+        text-align: center;
+        padding: 0.9rem 0.5rem;
+    }
+    
+    .badge-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: .1em;
+        border-radius: 10%;
+        color: #fefefe;
+        font-weight: 400;
+        width: 5em;
+    }
+
+    .success-status {
+        background-color: green;
+    }
+
+    .error-status {
+        background-color: red;
+    }
+
+    .width-80 {
+        width: 80%;
+    }
+
+    .width-20 {
+        width: 20%;
+    }
+
+    .table-line-font-size{
+        font-size: 0.9em;
+    }
+
+    .hide-element{
+        display: none;
+    }
+</style>
+
+<div class="container">
+    <div class="container">
+        <div class="form-header">
+            <p>Check for ETH transactions status</p>
+        </div>
+        <div>
+            <form phx-submit="tx_search">
+                <div>
+                    <div>
+                        <label class="label">Enter an ETH transaction hash:</label>
+                        <input type="text" name="tx_hash" placeholder="e.g. 0x7b6d0e8d812873260291c3f8a9fa99a61721a033a01e5c5af3ceb5e1dc9e7bd0" value="0x7b6d0e8d812873260291c3f8a9fa99a61721a033a01e5c5af3ceb5e1dc9e7bd0" autofocus />
+                    </div>
+                    <div class={hide_element(Kernel.length(@transactions) >= 1)}>
+                        <p class="alert alert-danger" role="alert"
+                        phx-click="lv:clear-flash"
+                        phx-value-key="error"><%= live_flash(@flash, :error) %></p>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" class="submit">
+                        check status
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <%= if Kernel.length(@transactions) >= 1 do %>
+        <div class="container container-table">
+            <table class="bordered_table">
+                <tr>
+                    <th class="width-80">
+                        <div>ETH transaction hash</div>
+                    </th>
+                    <th class="width-20">
+                        <div>status</div>
+                    </th>
+                </tr>
+                <%= for transaction <- @transactions do %>
+                    <tr class="table-line-font-size">
+                        <td>
+                            <div>
+                                <%= transaction.hash %>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="badge-wrapper">
+                                <span class={status_color(transaction.status)}>
+                                    <%= if transaction.status == true do %>
+                                        success
+                                    <% else %>
+                                        failed
+                                    <% end %>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                <% end %>
+            </table>
+        </div>
+    <% end %>
+</div>
