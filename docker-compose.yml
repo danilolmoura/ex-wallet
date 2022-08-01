@@ -1,0 +1,36 @@
+version: "3.6"
+
+services:
+  db:
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    image: postgres:11-alpine
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+  api:
+    build: .
+    depends_on:
+      - db
+    environment:
+      MIX_ENV: dev
+    env_file:
+      - .env
+    ports:
+      - "4000:4000"
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    restart: always
+
+
+volumes:
+  pgdata:

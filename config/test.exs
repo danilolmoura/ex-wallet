@@ -6,10 +6,7 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :ex_wallet, ExWallet.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "ex_wallet_test#{System.get_env("MIX_TEST_PARTITION")}",
+  url: String.replace(System.get_env("DATABASE_URL"), "?", "test"),
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 

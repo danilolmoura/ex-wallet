@@ -1,0 +1,10 @@
+**/.idea
+**/*.iml
+**/_build
+**/cover
+**/deps
+**/erl_crash.dump
+*.ez
+**/priv/static
+Dockerfile
+docker-compose.yml
