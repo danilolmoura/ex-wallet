@@ -12,7 +12,7 @@ defmodule ExWalletWeb.EthLive.TransactionStatus do
   end
 
   def handle_event("tx_search", %{"tx_hash" => tx_hash}, socket) do
-    case EtherScan.Api.get_tx_receipt_status(tx_hash) do
+    case EtherScan.Api.get_tx_receipt(String.trim(tx_hash)) do
       {:ok, transaction} ->
         socket =
           socket
@@ -30,8 +30,9 @@ defmodule ExWalletWeb.EthLive.TransactionStatus do
     end
   end
 
-  defp status_color(true), do: "badge success-status"
-  defp status_color(false), do: "badge error-status"
+  defp status_color(0), do: "badge error-status"
+  defp status_color(1), do: "badge success-status"
+  defp status_color(2), do: "badge pending-status"
 
   defp hide_element(true), do: "hide-element"
   defp hide_element(false), do: ""

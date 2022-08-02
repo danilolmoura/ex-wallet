@@ -69,6 +69,10 @@
         background-color: red;
     }
 
+    .pending-status {
+        background-color: #ded916;
+    }
+
     .width-80 {
         width: 80%;
     }
@@ -96,12 +100,7 @@
                 <div>
                     <div>
                         <label class="label">Enter an ETH transaction hash:</label>
-                        <input type="text" name="tx_hash" placeholder="e.g. 0x7b6d0e8d812873260291c3f8a9fa99a61721a033a01e5c5af3ceb5e1dc9e7bd0" value="0x7b6d0e8d812873260291c3f8a9fa99a61721a033a01e5c5af3ceb5e1dc9e7bd0" autofocus />
-                    </div>
-                    <div class={hide_element(Kernel.length(@transactions) >= 1)}>
-                        <p class="alert alert-danger" role="alert"
-                        phx-click="lv:clear-flash"
-                        phx-value-key="error"><%= live_flash(@flash, :error) %></p>
+                        <input type="text" name="tx_hash" placeholder="e.g. 0x7b6d0e8d812873260291c3f8a9fa99a61721a033a01e5c5af3ceb5e1dc9e7bd0" autofocus />
                     </div>
                 </div>
                 <div>
@@ -115,6 +114,11 @@
 </div>
 
 <div>
+    <div class={hide_element(Kernel.length(@transactions) >= 1)}>
+        <p class="alert alert-danger" role="alert"
+        phx-click="lv:clear-flash"
+        phx-value-key="error"><%= live_flash(@flash, :error) %></p>
+    </div>
     <%= if Kernel.length(@transactions) >= 1 do %>
         <div class="container container-table">
             <table class="bordered_table">
@@ -136,11 +140,11 @@
                         <td>
                             <div class="badge-wrapper">
                                 <span class={status_color(transaction.status)}>
-                                    <%= if transaction.status == true do %>
-                                        success
-                                    <% else %>
-                                        failed
-                                    <% end %>
+                                    <%= case transaction.status do
+                                        0 -> "failed"
+                                        1 -> "success"
+                                        2 -> "pending"
+                                    end %>
                                 </span>
                             </div>
                         </td>

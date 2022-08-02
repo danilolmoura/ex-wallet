@@ -12,15 +12,16 @@ defmodule Integration.EtherScan.Api do
   alias Integration.EtherScan.Api.TransactionStatus
 
   @base_url "https://api.etherscan.io/api"
-  @params_get_tx_receipt_status %{
-    "action" => "gettxreceiptstatus",
-    "module" => "transaction"
+  @eth_getTransactionReceipt %{
+    "action" => "eth_getTransactionReceipt",
+    "module" => "proxy"
   }
+  @error_msg_invalid_hash "Invalid transaction hash"
 
   defp api_key, do: Application.get_env(:integration, :etherscan)[:api_key]
 
   @doc """
-  Get transaction receipt status
+  Get transaction receipt details by hash
 
   ## Parameters
 
@@ -28,19 +29,23 @@ defmodule Integration.EtherScan.Api do
 
   ## Examples
 
-  iex> Integration.EtherScan.Api.get_tx_receipt_status("0x7b6d0e8d812873260291c3f8a9fa99a61721a033a01e5c5af3ceb5e1dc9e7bd0")
+  iex> Integration.EtherScan.Api.get_tx_receipt("0x7b6d0e8d812873260291c3f8a9fa99a61721a033a01e5c5af3ceb5e1dc9e7bd0")
   {:ok,
   %Integration.EtherScan.Api.TransactionStatus{
     hash: "1111",
     status: true
   }}
   """
-  @spec get_tx_receipt_status(String.t()) :: {:ok, %TransactionStatus{}} | {:error, String.t()}
-  def get_tx_receipt_status(txhash) do
-    params = @params_get_tx_receipt_status |> Map.put("txhash", txhash)
+  @spec get_tx_receipt(String.t()) :: {:ok, %TransactionStatus{}} | {:error, String.t()}
+  def get_tx_receipt(""), do: {:error, @error_msg_invalid_hash}
+  def get_tx_receipt(nil), do: {:error, @error_msg_invalid_hash}
+
+  def get_tx_receipt(txhash) do
+    params = @eth_getTransactionReceipt |> Map.put("txhash", txhash)
 
     client()
     |> get(build_url(@base_url, params))
+    |> IO.inspect(label: "aaaa")
     |> handle_response()
     |> build_transaction_status(txhash)
   end
@@ -63,12 +68,17 @@ defmodule Integration.EtherScan.Api do
     {:error, "Something went wrong, please try again in few seconds"}
   end
 
-  defp response_status(%Tesla.Env{status: 200, body: %{"status" => "1", "result" => result}}) do
-    {:ok, result}
+  defp response_status(%Tesla.Env{status: 200, body: %{"error" => %{"message" => message}}}) do
+    Logger.warning("EtherScan.Api: #{message}")
+    {:error, @error_msg_invalid_hash}
   end
 
-  defp response_status(%Tesla.Env{status: 400}) do
-    {:ok, :bad_request}
+  defp response_status(%Tesla.Env{status: 200, body: %{"result" => nil}}) do
+    {:ok, %{"status" => nil}}
+  end
+
+  defp response_status(%Tesla.Env{status: 200, body: %{"result" => result}}) do
+    {:ok, result}
   end
 
   defp build_transaction_status({:error, reason}, _), do: {:error, reason}
@@ -80,8 +90,9 @@ defmodule Integration.EtherScan.Api do
     |> build_struct(TransactionStatus)
   end
 
-  defp put_transaction_status(map, %{"status" => "1"}), do: Map.put(map, "status", true)
-  defp put_transaction_status(map, %{"status" => "0"}), do: Map.put(map, "status", false)
+  defp put_transaction_status(map, %{"status" => "0x0"}), do: Map.put(map, "status", 0)
+  defp put_transaction_status(map, %{"status" => "0x1"}), do: Map.put(map, "status", 1)
+  defp put_transaction_status(map, %{"status" => nil}), do: Map.put(map, "status", 2)
 
   defp put_hash(map, hash), do: Map.put(map, "hash", hash)
 end

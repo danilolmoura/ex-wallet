@@ -15,7 +15,7 @@ defmodule Integration.EtherScan.Api.TransactionStatus do
   @primary_key false
   embedded_schema do
     field(:hash, :string)
-    field(:status, :boolean)
+    field(:status, :integer)
   end
 
   def changeset(%__MODULE__{} = struct, attrs) do
