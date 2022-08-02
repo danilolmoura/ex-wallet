@@ -17,7 +17,7 @@ cp .env-sample .env
 
 Open `.env` file and set value for environment variable `ETHERSCAN_API_KEY`:
 
-> Note: Click [here](https://etherscan.io/txsPending) to learn how create an API KEY
+> Note: click [here](https://docs.etherscan.io/getting-started/viewing-api-usage-statisticsg) to learn how create an API KEY
 
 <img width="486" alt="Screen Shot 2022-08-02 at 13 33 23" src="https://user-images.githubusercontent.com/10969968/182426767-cdfc312c-3685-4dd6-b9d0-88ccb7cfd1df.png">
 
@@ -37,7 +37,8 @@ Up the project:
 docker-compose up
 ```
 
-Access via http://localhost:4000
+The application will be available through
+> http://localhost:4000
 
 ### Examples of transactions
 
