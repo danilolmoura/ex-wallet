@@ -45,7 +45,6 @@ defmodule Integration.EtherScan.Api do
 
     client()
     |> get(build_url(@base_url, params))
-    |> IO.inspect(label: "aaaa")
     |> handle_response()
     |> build_transaction_status(txhash)
   end

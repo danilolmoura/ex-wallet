@@ -2,7 +2,7 @@ FROM hexpm/elixir:1.13.0-rc.1-erlang-25.0-rc1-alpine-3.16.0 as builder
 
 RUN apk update \
   && apk add --no-cache bash make gcc libc-dev postgresql-client ca-certificates inotify-tools \
-  && update-ca-certificates   
+  && update-ca-certificates
 
 WORKDIR app
 
